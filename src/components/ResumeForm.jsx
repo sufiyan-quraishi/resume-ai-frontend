@@ -81,11 +81,11 @@ export default function ResumeForm({ onGenerated }) {
 
       <Fieldset legend="Basics">
         <div className="grid grid-2">
-          <Input label="Full name *" value={form.fullName} onChange={setField('fullName')} placeholder="Vaibhav Barde" />
-          <Input label="Target role" value={form.targetRole} onChange={setField('targetRole')} placeholder="Senior Java Full Stack Developer" />
-          <Input label="Email" value={form.email} onChange={setField('email')} placeholder="you@example.com" />
-          <Input label="Phone" value={form.phone} onChange={setField('phone')} placeholder="+91 …" />
-          <Input label="Location" value={form.location} onChange={setField('location')} placeholder="Pune, India" />
+          <Input label="Full name *" value={form.fullName} onChange={setField('fullName')} placeholder="Your Name" />
+          <Input label="Target role" value={form.targetRole} onChange={setField('targetRole')} placeholder="Targate Role (e.g Software Engineer)" />
+          <Input label="Email" value={form.email} onChange={setField('email')} placeholder="Your Email Address" />
+          <Input label="Phone" value={form.phone} onChange={setField('phone')} placeholder="Your Phone Number" />
+          <Input label="Location" value={form.location} onChange={setField('location')} placeholder="City, State" />
           <Input label="LinkedIn" value={form.linkedIn} onChange={setField('linkedIn')} placeholder="linkedin.com/in/…" />
           <Input label="GitHub" value={form.github} onChange={setField('github')} placeholder="github.com/…" />
           <Input label="Portfolio" value={form.portfolio} onChange={setField('portfolio')} placeholder="yoursite.dev" />
