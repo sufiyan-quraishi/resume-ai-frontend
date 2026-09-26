@@ -56,25 +56,25 @@ export default function CoverLetterForm({ onGenerated }) {
 
       <div className="grid grid-2">
         <Field label="Full name *">
-          <input value={form.fullName} onChange={setField('fullName')} placeholder="Vaibhav Barde" />
+          <input value={form.fullName} onChange={setField('fullName')} placeholder="Your Name" />
         </Field>
         <Field label="Applying for (role)">
-          <input value={form.jobTitle} onChange={setField('jobTitle')} placeholder="Technical Lead" />
+          <input value={form.jobTitle} onChange={setField('jobTitle')} placeholder="Your Job Title" />
         </Field>
         <Field label="Company *">
-          <input value={form.companyName} onChange={setField('companyName')} placeholder="Acme Corp" />
+          <input value={form.companyName} onChange={setField('companyName')} placeholder="Company Name" />
         </Field>
         <Field label="Hiring manager">
-          <input value={form.hiringManager} onChange={setField('hiringManager')} placeholder="Ms. Sharma (optional)" />
+          <input value={form.hiringManager} onChange={setField('hiringManager')} placeholder="Hiring Manager Name (optional)" />
         </Field>
         <Field label="Email">
-          <input value={form.email} onChange={setField('email')} placeholder="you@example.com" />
+          <input value={form.email} onChange={setField('email')} placeholder="Your Email Address" />
         </Field>
         <Field label="Phone">
-          <input value={form.phone} onChange={setField('phone')} placeholder="+91 …" />
+          <input value={form.phone} onChange={setField('phone')} placeholder="Your Phone Number" />
         </Field>
         <Field label="Years of experience">
-          <input value={form.yearsOfExperience} onChange={setField('yearsOfExperience')} placeholder="6" />
+          <input value={form.yearsOfExperience} onChange={setField('yearsOfExperience')} placeholder="Years of Experience" />
         </Field>
         <Field label="Tone">
           <select value={form.tone} onChange={setField('tone')}>
