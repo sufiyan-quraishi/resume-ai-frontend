@@ -36,7 +36,7 @@ a { color: inherit; text-decoration: none; }
 ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: var(--radius-pill); border: 2px solid var(--bg); }
 ::selection { background: var(--accent-tint); color: var(--ink); }
 
-/* Focus ring — never removed, always replaced */
+/* Focus ring */
 :focus-visible {
   outline: 2px solid var(--accent-bright);
   outline-offset: 2px;
@@ -174,7 +174,7 @@ em { color: var(--muted); font-style: normal; }
 .nav {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 1000;
   width: 100%;
   padding: var(--space-3) 0;
   transition: padding var(--transition-normal), background var(--transition-normal), box-shadow var(--transition-normal);
@@ -253,6 +253,8 @@ em { color: var(--muted); font-style: normal; }
   align-items: center;
   gap: var(--space-3);
   flex-shrink: 0;
+  position: relative;
+  z-index: 1002;
 }
 .nav__auth-buttons {
   display: flex;
@@ -272,6 +274,8 @@ em { color: var(--muted); font-style: normal; }
   padding: 0;
   width: 36px;
   height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -294,7 +298,7 @@ em { color: var(--muted); font-style: normal; }
   padding: var(--space-3);
   display: flex;
   flex-direction: column;
-  z-index: 100;
+  z-index: 1100;
 }
 .nav__user-name { font-weight: 600; font-size: 0.9rem; padding: var(--space-2) var(--space-2) 0; }
 .nav__user-email { font-size: 0.78rem; color: var(--muted); padding: 0 var(--space-2) var(--space-2); border-bottom: 1px solid var(--line); margin-bottom: var(--space-2); word-break: break-all; }
@@ -330,10 +334,11 @@ em { color: var(--muted); font-style: normal; }
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: #fff;
   font-weight: 700;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-family: var(--font-display);
   overflow: hidden;
   text-transform: uppercase;
+  user-select: none;
 }
 
 .nav__burger {
@@ -345,6 +350,8 @@ em { color: var(--muted); font-style: normal; }
   padding: 6px;
   cursor: pointer;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1002;
 }
 .nav__burger span { width: 20px; height: 2px; background: var(--ink); border-radius: 2px; transition: transform var(--transition-fast), opacity var(--transition-fast); }
 
@@ -842,7 +849,7 @@ textarea { resize: vertical; min-height: 44px; font-family: inherit; }
 /* ---------- 11. Profile ---------- */
 .profile-page { max-width: var(--container); margin: 0 auto; padding: var(--space-8) var(--space-5); width: 100%; }
 .profile-header { display: flex; align-items: center; gap: var(--space-5); margin-bottom: var(--space-7); flex-wrap: wrap; }
-.profile-photo { position: relative; width: 84px; height: 84px; flex-shrink: 0; }
+.profile-photo { position: relative; width: 84px; height: 84px; min-width: 84px; min-height: 84px; flex-shrink: 0; }
 .profile-photo .avatar-img, .profile-photo .avatar-fallback { width: 84px; height: 84px; border-radius: 50%; font-size: 1.8rem; }
 .profile-photo__edit {
   position: absolute; bottom: 0; right: 0;
@@ -858,7 +865,7 @@ textarea { resize: vertical; min-height: 44px; font-family: inherit; }
   cursor: pointer;
 }
 .profile-header__name { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 2px; }
-.profile-header__email { color: var(--muted); font-size: 0.88rem; margin-bottom: 6px; }
+.profile-header__email { color: var(--muted); font-size: 0.88rem; margin-bottom: 6px; word-break: break-all; }
 .profile-header__meta { color: var(--muted); font-size: 0.8rem; display: flex; align-items: center; gap: var(--space-2); }
 
 .profile-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--space-5); align-items: start; }
@@ -1033,29 +1040,33 @@ textarea { resize: vertical; min-height: 44px; font-family: inherit; }
 @media (max-width: 720px) {
   .nav__inner {
     padding: 0 10px;
-    gap: 8px;
+    gap: 6px;
   }
   .nav__brand {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
   }
   .nav__brand-text {
     display: none; /* Logo mark dikhega, text hide hoga taaki jagah bache */
   }
   .nav__actions {
-    gap: 8px;
+    gap: 6px;
   }
   .nav__auth-buttons .nav__link {
-    font-size: 0.82rem;
-    padding: 4px;
+    font-size: 0.8rem;
+    padding: 3px 5px;
   }
   .nav__auth-buttons .btn--sm {
-    padding: 6px 10px;
-    font-size: 0.78rem;
+    padding: 5px 8px;
+    font-size: 0.74rem;
   }
   .nav__avatar-btn {
     width: 32px;
     height: 32px;
+    min-width: 32px;
+    min-height: 32px;
   }
+  
+  /* Drawer Menu & Pointer Events Guard */
   .nav__links {
     position: fixed;
     top: 56px;
@@ -1070,11 +1081,14 @@ textarea { resize: vertical; min-height: 44px; font-family: inherit; }
     transform: translateX(100%);
     opacity: 0;
     pointer-events: none;
-    transition: transform var(--transition-normal), opacity var(--transition-normal);
+    visibility: hidden; /* Button tap block na ho isliye hidden */
+    transition: transform var(--transition-normal), opacity var(--transition-normal), visibility var(--transition-normal);
+    z-index: 999;
   }
   .nav__links--open {
     transform: translateX(0);
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
   }
   .nav__link {
@@ -1082,8 +1096,12 @@ textarea { resize: vertical; min-height: 44px; font-family: inherit; }
     font-size: 1.05rem;
     border-bottom: 1px solid var(--line);
   }
-  .nav__burger { display: flex; }
-  .feature-list__grid { grid-template-columns: 1fr; }
+  .nav__burger { 
+    display: flex; 
+  }
+  .feature-list__grid { 
+    grid-template-columns: 1fr; 
+  }
   
   .hero__mock {
     width: 100%;
