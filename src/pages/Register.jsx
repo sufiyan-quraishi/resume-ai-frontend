@@ -91,13 +91,13 @@ export default function Register() {
               <p className="auth-sub">Free to use — build your first resume in minutes.</p>
 
               <Field label="Full name">
-                <input required value={form.fullName} onChange={update('fullName')} placeholder="Aditi Sharma" />
+                <input required value={form.fullName} onChange={update('fullName')} placeholder="Your Name" />
               </Field>
               <Field label="Email">
                 <input required type="email" value={form.email} onChange={update('email')} placeholder="you@example.com" />
               </Field>
               <Field label="Phone (optional)">
-                <input value={form.phone} onChange={update('phone')} placeholder="+91 98765 43210" />
+                <input value={form.phone} onChange={update('phone')} placeholder="+91 88558 15751" />
               </Field>
               <Field label="Password">
                 <input required type="password" minLength={6} value={form.password} onChange={update('password')} placeholder="At least 6 characters" />
