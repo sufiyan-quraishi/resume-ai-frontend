@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../context/AuthContext.jsx'
 import ThemeSwitcher from './ThemeSwitcher.jsx'
@@ -7,9 +7,16 @@ import ThemeSwitcher from './ThemeSwitcher.jsx'
 export default function Navbar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+
+  // Jab bhi route/URL change ho, drawer menu automatically band ho jaye
+  useEffect(() => {
+    setMenuOpen(false)
+    setUserMenuOpen(false)
+  }, [location.pathname, location.search])
 
   useEffect(() => {
     function onScroll() {
@@ -23,6 +30,7 @@ export default function Navbar() {
   function handleLogout() {
     logout()
     setUserMenuOpen(false)
+    setMenuOpen(false)
     navigate('/')
   }
 
@@ -39,6 +47,21 @@ export default function Navbar() {
           </span>
           <span className="nav__brand-text">Resume AI</span>
         </Link>
+
+        {/* Mobile drawer backdrop click guard */}
+        {menuOpen && (
+          <div 
+            className="nav__backdrop"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              top: '56px',
+              background: 'rgba(0,0,0,0.4)',
+              zIndex: 998
+            }}
+          />
+        )}
 
         <nav className={`nav__links${menuOpen ? ' nav__links--open' : ''}`}>
           <NavLink to="/workspace" className="nav__link" onClick={() => setMenuOpen(false)}>
@@ -59,8 +82,13 @@ export default function Navbar() {
           <ThemeSwitcher />
           {user ? (
             <div className="nav__user">
-              <button className="nav__avatar-btn" onClick={() => setUserMenuOpen((o) => !o)}>
-                <Avatar user={user} />
+              <button 
+                type="button"
+                className="nav__avatar-btn" 
+                onClick={() => setUserMenuOpen((o) => !o)}
+                aria-label="User profile menu"
+              >
+                <Avatar user={user} size={32} />
               </button>
               <AnimatePresence>
                 {userMenuOpen && (
@@ -72,12 +100,12 @@ export default function Navbar() {
                     transition={{ duration: 0.15 }}
                     onMouseLeave={() => setUserMenuOpen(false)}
                   >
-                    <p className="nav__user-name">{user.fullName}</p>
+                    <p className="nav__user-name">{user.fullName || 'User'}</p>
                     <p className="nav__user-email">{user.email}</p>
                     <Link to="/profile" className="nav__user-item" onClick={() => setUserMenuOpen(false)}>
                       View profile
                     </Link>
-                    <button className="nav__user-item nav__user-item--danger" onClick={handleLogout}>
+                    <button type="button" className="nav__user-item nav__user-item--danger" onClick={handleLogout}>
                       Log out
                     </button>
                   </motion.div>
@@ -86,11 +114,28 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="nav__auth-buttons">
-              <Link to="/login" className="btn btn--ghost btn--sm">Log in</Link>
-              <Link to="/register" className="btn btn--primary btn--sm">Get started</Link>
+              <Link 
+                to="/login" 
+                className="btn btn--ghost btn--sm" 
+                onClick={() => setMenuOpen(false)}
+              >
+                Log in
+              </Link>
+              <Link 
+                to="/register" 
+                className="btn btn--primary btn--sm" 
+                onClick={() => setMenuOpen(false)}
+              >
+                Get started
+              </Link>
             </div>
           )}
-          <button className="nav__burger" onClick={() => setMenuOpen((o) => !o)} aria-label="Menu">
+          <button 
+            type="button" 
+            className="nav__burger" 
+            onClick={() => setMenuOpen((o) => !o)} 
+            aria-label="Toggle navigation menu"
+          >
             <span /><span /><span />
           </button>
         </div>
@@ -100,25 +145,47 @@ export default function Navbar() {
 }
 
 export function Avatar({ user, size = 36 }) {
-  const initials = (user?.fullName || '?')
+  const [imgError, setImgError] = useState(false)
+
+  // photoUrl ya avatarUrl property check karna
+  const photo = user?.photoUrl || user?.avatarUrl || user?.avatar
+
+  const initials = (user?.fullName || user?.name || user?.email || '?')
+    .trim()
     .split(' ')
+    .filter(Boolean)
     .map((p) => p[0])
     .slice(0, 2)
     .join('')
     .toUpperCase()
 
-  if (user?.photoUrl) {
+  if (photo && !imgError) {
     return (
       <img
         className="avatar-img"
-        src={user.photoUrl}
-        alt={user.fullName}
-        style={{ width: size, height: size }}
+        src={photo}
+        alt={user?.fullName || 'Avatar'}
+        onError={() => setImgError(true)}
+        style={{ width: size, height: size, objectFit: 'cover', borderRadius: '50%' }}
       />
     )
   }
+
   return (
-    <span className="avatar-fallback" style={{ width: size, height: size, fontSize: size * 0.38 }}>
+    <span 
+      className="avatar-fallback" 
+      style={{ 
+        width: size, 
+        height: size, 
+        fontSize: `${Math.round(size * 0.38)}px`,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '50%',
+        textTransform: 'uppercase',
+        lineHeight: 1
+      }}
+    >
       {initials}
     </span>
   )
