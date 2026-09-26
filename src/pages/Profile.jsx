@@ -52,14 +52,29 @@ export default function Profile() {
     if (!file) return
     setPhotoError('')
     setPhotoBusy(true)
+
+    // Local instant preview taaki user ko turant dikh jaye
+    const previewUrl = URL.createObjectURL(file)
+    updateLocalUser({ ...user, photoUrl: previewUrl })
+
     try {
       const updated = await uploadProfilePhoto(file)
-      updateLocalUser(updated)
+      // Cache buster add karke update karna taaki server photo turant reflect ho
+      const photoWithTimestamp = updated?.photoUrl 
+        ? `${updated.photoUrl.split('?')[0]}?t=${Date.now()}` 
+        : previewUrl
+      
+      updateLocalUser({
+        ...(updated || user),
+        photoUrl: photoWithTimestamp
+      })
     } catch (err) {
       setPhotoError(describeError(err))
+      // Agar fail ho jaye to preview revert karein
+      updateLocalUser(user)
     } finally {
       setPhotoBusy(false)
-      e.target.value = ''
+      if (fileRef.current) fileRef.current.value = ''
     }
   }
 
@@ -85,7 +100,7 @@ export default function Profile() {
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
         <div className="profile-header">
           <div className="profile-photo">
-            <Avatar user={user} size={96} />
+            <Avatar key={user?.photoUrl || 'avatar-key'} user={user} size={84} />
             <button
               type="button"
               className="profile-photo__edit"
@@ -104,10 +119,10 @@ export default function Profile() {
             />
           </div>
           <div>
-            <h1 className="profile-header__name">{user.fullName}</h1>
+            <h1 className="profile-header__name">{user.fullName || 'User'}</h1>
             <p className="profile-header__email">{user.email}</p>
             <p className="profile-header__meta">
-              Member since {new Date(user.createdAt).toLocaleDateString()}
+              Member since {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'recently'}
               {user.emailVerified && <span className="badge badge--live badge--sm"><span className="badge-dot" /> Verified</span>}
             </p>
           </div>
@@ -162,7 +177,7 @@ export default function Profile() {
               This permanently deletes your account and profile photo. This cannot be undone.
             </p>
             {!deleteOpen ? (
-              <button className="btn btn--danger-outline" onClick={() => setDeleteOpen(true)}>
+              <button type="button" className="btn btn--danger-outline" onClick={() => setDeleteOpen(true)}>
                 Delete my account
               </button>
             ) : (
